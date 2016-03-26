@@ -845,7 +845,7 @@ var ReactImageLightbox = React.createClass({
             var imageStyle = [Styles.image(this.props.animationDuration), baseStyle, transitionStyle];
             var fitSizes = {};
             if (this.state.zoomLevel > Constant.MIN_ZOOM_LEVEL) {
-                imageStyle.push({ cursor: 'move' });
+                imageStyle.push({ cursor: ['pointer', 'move'] });
             }
 
             var bestImageInfo = this.getBestImageForType(srcType);
