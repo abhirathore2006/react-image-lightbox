@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "description": "A lightbox component for React.js",
   "scripts": {
-    "build": "npm run lint && npm run build:demo && npm run build:umd",
+    "build": " npm run build:demo && npm run build:umd",
     "build:demo": "npm run clean:demo && cross-env NODE_ENV=production webpack --config webpack.config.demo.babel.js --bail",
     "build:umd": "npm run clean:umd && cross-env NODE_ENV=production webpack --config webpack.config.umd.babel.js --bail",
     "clean": "npm run clean:demo && npm run clean:umd",
@@ -17,7 +17,7 @@
   },
   "main": "dist/umd/react-image-lightbox.js",
   "files": [
-      "dist"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -30,6 +30,8 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "fs": "0.0.2",
+    "jsdom": "^9.4.1",
     "react-modal": "^1.4.0"
   },
   "peerDependencies": {

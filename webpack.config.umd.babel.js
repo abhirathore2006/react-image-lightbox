@@ -1,6 +1,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -18,6 +19,7 @@ module.exports = {
     devtool: 'source-map',
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin(),
+        new ExtractTextPlugin('bundle.min.css'),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
@@ -41,12 +43,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loaders: [
-                    'style-loader',
-                    'css-loader?modules&importLoaders=1&localIdentName=[local]___[hash:base64:5]',
-                    'postcss-loader',
-                    'sass-loader',
-                ],
+                loader: ExtractTextPlugin.extract('style', 'css-loader?modules&importLoaders=1&localIdentName=[local]___[hash:base64:5]','postcss-loader','sass-loader'),
                 include: path.join(__dirname, 'src')
             },
         ]
