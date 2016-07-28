@@ -10,13 +10,14 @@ Features
 - Image Zoom
 - Flexible rendering using src values assigned on the fly
 - Image preloading for smoother viewing
-- No external CSS
+- CSS is generated using extract-text-webpack-plugin so require it as shown in below example
 
 ## Example
 
 ```jsx
 var React    = require('react');
 var Lightbox = require('react-image-lightbox-universal');
+require('react-image-lightbox-universal/dist/umd/bundle.min.css'); 
 
 var images = [
     '//placekitten.com/1500/500',
