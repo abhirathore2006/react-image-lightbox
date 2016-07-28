@@ -162,7 +162,7 @@ const App = React.createClass({
 
                     <footer className={styles['site-footer']}>
                         <span className={styles['site-footer-owner']}>
-                            <a href="https://github.com/abhirathore2006/react-image-lightbox-universal">React Image Lightbox</a> is maintained by <a href="https://github.com/abhirathore2006">Abhimanyu rathore</a> and originally developed by <a href="https://github.com/fritz-c">fritz-c</a>.
+                            <a href="https://github.com/abhirathore2006/react-image-lightbox-universal">React Image Lightbox Universal</a> is maintained by <a href="https://github.com/abhirathore2006">Abhimanyu rathore</a> and originally developed by <a href="https://github.com/fritz-c">fritz-c</a>.
                         </span>
 
                         <span className={styles['site-footer-credits']}>
