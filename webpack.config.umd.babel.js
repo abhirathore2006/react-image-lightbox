@@ -26,9 +26,6 @@ module.exports = {
             },
         }),
     ],
-    postcss: [
-        autoprefixer,
-    ],
     externals: {
         react: 'react',
         'react-dom': 'react-dom',
@@ -43,7 +40,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loader: ExtractTextPlugin.extract('style', 'css-loader?modules&importLoaders=1&localIdentName=[local]___[hash:base64:5]','postcss-loader','sass-loader'),
+                loader: ExtractTextPlugin.extract('style', 'css-loader','sass-loader'),
                 include: path.join(__dirname, 'src')
             },
         ]

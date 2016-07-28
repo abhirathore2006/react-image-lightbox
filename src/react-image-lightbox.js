@@ -1,11 +1,11 @@
 /*
- * react-image-lightbox 2.2.0
+ * react-image-lightbox
  * Copyright 2016 Chris Fritz All rights reserved.
  * @license Open source under the MIT License
  */
 
 import React, { Component, PropTypes } from 'react';
-import Modal from 'react-modal';
+//import Modal from 'react-modal';
 import {
     translate,
     getWindowWidth,
@@ -22,10 +22,49 @@ import {
     WHEEL_MOVE_Y_THRESHOLD,
     ZOOM_BUTTON_INCREMENT_SIZE,
 } from './constant';
-import baseStyles from './style.scss';
+
+
+
+require('./style.scss')
 
 // Add fallback classes for browsers without flexbox support
-let styles = baseStyles;
+let styles = {"builtinButtonDisabled":"builtinButtonDisabled_rilu",
+"builtinButton":"builtinButton_rilu",
+"closeButton":"closeButton_rilu",
+"closeWindow":"closeWindow_rilu",
+"closeWindow":"closeWindow_rilu",
+"downloadBlocker":"downloadBlocker_rilu",
+"imageDiscourager":"imageDiscourager_rilu",
+"imageNext":"imageNext_rilu",
+"imagePrev":"imagePrev_rilu",
+"image":"image_rilu",
+"inner":"inner_rilu",
+"navButtonNext":"navButtonNext_rilu",
+"navButtonPrev":"navButtonPrev_rilu",
+"navButtons":"navButtons_rilu",
+"outerAnimating":"outerAnimating_rilu",
+"outerClosing":"outerClosing_rilu",
+"outer":"outer_rilu",
+"toolbarItemChild":"toolbarItemChild_rilu",
+"toolbarItem":"toolbarItem_rilu",
+"toolbarLeftSideNoFlex":"toolbarLeftSideNoFlex_rilu",
+"toolbarLeftSide":"toolbarLeftSide_rilu",
+"toolbarRightSideNoFlex":"toolbarRightSideNoFlex_rilu",
+"toolbarRightSide":"toolbarRightSide_rilu",
+"toolbarSideNoFlex":"toolbarSideNoFlex_rilu",
+"toolbarSide":"toolbarSide_rilu",
+"toolbar":"toolbar_rilu",
+"zoomInButton":"zoomInButton_rilu",
+"zoomOutButton":"zoomOutButton_rilu"}
+/**if (getIEVersion() < 10) {
+    styles = {
+        ...styles,
+        toolbarSide:      `${styles.toolbarSide} ${styles.toolbarSideNoFlex}`,
+        toolbarLeftSide:  `${styles.toolbarLeftSide} ${styles.toolbarLeftSideNoFlex}`,
+        toolbarRightSide: `${styles.toolbarRightSide} ${styles.toolbarRightSideNoFlex}`,
+    };
+}**/
+
 class ReactImageLightbox extends Component {
     constructor(props) {
         super(props);
@@ -56,8 +95,6 @@ class ReactImageLightbox extends Component {
 
             // Vertical offset from center
             offsetY: 0,
-            //adding styles to state so we can check on mount and update state
-            styles:styles
         };
 
         this.closeIfClickInner        = this.closeIfClickInner.bind(this);
@@ -68,6 +105,8 @@ class ReactImageLightbox extends Component {
         this.handleOuterMouseDown     = this.handleOuterMouseDown.bind(this);
         this.handleOuterMouseMove     = this.handleOuterMouseMove.bind(this);
         this.handleOuterMousewheel    = this.handleOuterMousewheel.bind(this);
+        this.handleOuterTouchStart    = this.handleOuterTouchStart.bind(this);
+        this.handleOuterTouchMove     = this.handleOuterTouchMove.bind(this);
         this.handleWindowResize       = this.handleWindowResize.bind(this);
         this.handleZoomInButtonClick  = this.handleZoomInButtonClick.bind(this);
         this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
@@ -118,16 +157,6 @@ class ReactImageLightbox extends Component {
     }
 
     componentDidMount() {
-        
-        if (getIEVersion() < 10) {
-                styles = {
-                    ...styles,
-                    toolbarSide:      `${styles.toolbarSide} ${styles.toolbarSideNoFlex}`,
-                    toolbarLeftSide:  `${styles.toolbarLeftSide} ${styles.toolbarLeftSideNoFlex}`,
-                    toolbarRightSide: `${styles.toolbarRightSide} ${styles.toolbarRightSideNoFlex}`,
-                };
-                this.setState({styles:styles});
-            }
         this.attachListeners();
 
         this.loadAllImages();
@@ -157,11 +186,13 @@ class ReactImageLightbox extends Component {
             document.addEventListener('keyup', this.handleKeyInput);
             window.addEventListener('resize', this.handleWindowResize);
             window.addEventListener('mouseup', this.handleMouseUp);
+            window.addEventListener('touchend', this.handleMouseUp);
 
             // Have to add an extra mouseup handler to catch mouseup events outside of the window
             //  if the page containing the lightbox is displayed in an iframe
             if (isInIframe()) {
                 window.top.addEventListener('mouseup', this.handleMouseUp);
+                window.top.addEventListener('touchend', this.handleMouseUp);
             }
 
             this.listenersAttached = true;
@@ -234,9 +265,11 @@ class ReactImageLightbox extends Component {
             document.removeEventListener('keyup', this.handleKeyInput);
             window.removeEventListener('resize', this.handleWindowResize);
             window.removeEventListener('mouseup', this.handleMouseUp);
+            window.removeEventListener('touchend', this.handleMouseUp);
 
             if (isInIframe()) {
                 window.top.removeEventListener('mouseup', this.handleMouseUp);
+                window.top.removeEventListener('touchend', this.handleMouseUp);
             }
 
             this.listenersAttached = false;
@@ -547,37 +580,73 @@ class ReactImageLightbox extends Component {
         }
     }
 
+    // Handle move start over the lightbox container
+    // This happens:
+    // - On a mouseDown event
+    // - On a touchstart event
+    handleMoveStart(clientX, clientY) {
+        // Only allow dragging when zoomed
+        if (this.state.zoomLevel <= MIN_ZOOM_LEVEL) {
+            return;
+        }
+
+        this.isDragging       = true;
+        this.dragStartX       = clientX;
+        this.dragStartY       = clientY;
+        this.dragStartOffsetX = this.state.offsetX;
+        this.dragStartOffsetY = this.state.offsetY;
+    }
+
     // Handle the mouse clicking down in the lightbox container
     handleOuterMouseDown(event) {
         event.preventDefault();
-
-        // Allow dragging when zoomed
-        if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
-            this.isDragging       = true;
-            this.dragStartX       = event.clientX;
-            this.dragStartY       = event.clientY;
-            this.dragStartOffsetX = this.state.offsetX;
-            this.dragStartOffsetY = this.state.offsetY;
-        }
+        this.handleMoveStart(event.clientX, event.clientY);
     }
 
-    // Handle the mouse dragging over the lightbox container
-    // (after a mouseDown and before a mouseUp event)
-    handleOuterMouseMove(event) {
+    // Touch screen version of handleOuterMouseDown()
+    handleOuterTouchStart(event) {
+        const touchObj = event.changedTouches[0];
+        this.handleMoveStart(parseInt(touchObj.clientX, 10), parseInt(touchObj.clientY, 10));
+    }
+
+    // Handle dragging over the lightbox container
+    // This happens:
+    // - After a mouseDown and before a mouseUp event
+    // - After a touchstart and before a touchend event
+    handleMove(clientX, clientY) {
         if (!this.isDragging) {
             return;
         }
 
         const zoomMultiplier = this.getZoomMultiplier();
 
-        const newOffsetX = (this.dragStartX - event.clientX) / zoomMultiplier + this.dragStartOffsetX;
-        const newOffsetY = (this.dragStartY - event.clientY) / zoomMultiplier + this.dragStartOffsetY;
+        const newOffsetX = (this.dragStartX - clientX) / zoomMultiplier + this.dragStartOffsetX;
+        const newOffsetY = (this.dragStartY - clientY) / zoomMultiplier + this.dragStartOffsetY;
         if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
             this.setState({
                 offsetX: newOffsetX,
                 offsetY: newOffsetY,
             });
         }
+    }
+
+    // Handle the mouse dragging over the lightbox container
+    // (after a mouseDown and before a mouseUp event)
+    handleOuterMouseMove(event) {
+        this.handleMove(event.clientX, event.clientY);
+    }
+
+    // Touch screen version of handleOuterMouseMove()
+    handleOuterTouchMove(event) {
+        event.preventDefault();
+
+        // We shouldn't go any further if we're not zoomed
+        if (this.state.zoomLevel <= MIN_ZOOM_LEVEL) {
+            return;
+        }
+
+        const touchObj = event.changedTouches[0];
+        this.handleMove(parseInt(touchObj.clientX, 10), parseInt(touchObj.clientY, 10));
     }
 
     // Handle the window resize event
@@ -727,7 +796,6 @@ class ReactImageLightbox extends Component {
     }
 
     render() {
-        
         let transitionStyle = {};
 
         // Transition settings for sliding animations
@@ -764,7 +832,7 @@ class ReactImageLightbox extends Component {
                 // Fall back to loading icon if the thumbnail has not been loaded
                 images.push(
                     <div
-                        className={`${imageClass} ${this.state.styles.image} not-loaded`}
+                        className={`${imageClass} ${styles.image} not-loaded`}
                         style={imageStyle}
                         key={this.props[srcType] + keyEndings[srcType]}
                     />
@@ -781,19 +849,19 @@ class ReactImageLightbox extends Component {
                 imageStyle.backgroundImage = `url('${imageSrc}')`;
                 images.push(
                     <div
-                        className={`${imageClass} ${this.state.styles.image} ${this.state.styles.imageDiscourager}`}
+                        className={`${imageClass} ${styles.image} ${styles.imageDiscourager}`}
                         onDoubleClick={this.handleImageDoubleClick}
                         onWheel={this.handleImageMouseWheel}
                         style={imageStyle}
                         key={imageSrc + keyEndings[srcType]}
                     >
-                        <div className="download-blocker ${this.state..styles.downloadBlocker}" />
+                        <div className="download-blocker ${styles.downloadBlocker}" />
                     </div>
                 );
             } else {
                 images.push(
                     <img
-                        className={`${imageClass} ${this.state.styles.image}`}
+                        className={`${imageClass} ${styles.image}`}
                         onDoubleClick={this.handleImageDoubleClick}
                         onWheel={this.handleImageMouseWheel}
                         style={imageStyle}
@@ -807,7 +875,7 @@ class ReactImageLightbox extends Component {
 
         const zoomMultiplier = this.getZoomMultiplier();
         // Next Image (displayed on the right)
-        addImage('nextSrc', `image-next ${this.state.styles.imageNext}`);
+        addImage('nextSrc', `image-next ${styles.imageNext}`);
         // Main Image
         addImage(
             'mainSrc',
@@ -821,25 +889,25 @@ class ReactImageLightbox extends Component {
             }
         );
         // Previous Image (displayed on the left)
-        addImage('prevSrc', `image-prev ${this.state.styles.imagePrev}`);
+        addImage('prevSrc', `image-prev ${styles.imagePrev}`);
 
         const noop = () => {};
 
         // Prepare styles and handlers for the zoom in/out buttons
-        const zoomInButtonClasses  = [this.state.styles.toolbarItemChild, this.state.styles.builtinButton, this.state.styles.zoomInButton];
-        const zoomOutButtonClasses = [this.state.styles.toolbarItemChild, this.state.styles.builtinButton, this.state.styles.zoomOutButton];
+        const zoomInButtonClasses  = [styles.toolbarItemChild, styles.builtinButton, styles.zoomInButton];
+        const zoomOutButtonClasses = [styles.toolbarItemChild, styles.builtinButton, styles.zoomOutButton];
         let zoomInButtonHandler    = this.handleZoomInButtonClick;
         let zoomOutButtonHandler   = this.handleZoomOutButtonClick;
 
         // Disable zooming in when zoomed all the way in
         if (this.state.zoomLevel === MAX_ZOOM_LEVEL) {
-            zoomInButtonClasses.push(this.state.styles.builtinButtonDisabled);
+            zoomInButtonClasses.push(styles.builtinButtonDisabled);
             zoomInButtonHandler = noop;
         }
 
         // Disable zooming out when zoomed all the way out
         if (this.state.zoomLevel === MIN_ZOOM_LEVEL) {
-            zoomOutButtonClasses.push(this.state.styles.builtinButtonDisabled);
+            zoomOutButtonClasses.push(styles.builtinButtonDisabled);
             zoomOutButtonHandler = noop;
         }
 
@@ -859,21 +927,23 @@ class ReactImageLightbox extends Component {
                 backgroundColor: 'transparent',
                 border:          'none',
                 borderRadius:    0,
+                top:             0,
+                left:            0,
+                right:           0,
+                bottom:          0,
             },
         };
 
         return (
-            <Modal
-                isOpen
-                onRequestClose={noop}
-                style={modalStyle}
-            >
+            <div>
                 <div // Floating modal with closing animations
                     onWheel={this.handleOuterMousewheel}
                     onMouseMove={this.handleOuterMouseMove}
                     onMouseDown={this.handleOuterMouseDown}
-                    className={`outer ${this.state.styles.outer} ${this.state.styles.outerAnimating}` +
-                        (this.state.isClosing ? ` closing ${this.state.styles.outerClosing}` : '')
+                    onTouchStart={this.handleOuterTouchStart}
+                    onTouchMove={this.handleOuterTouchMove}
+                    className={`outer ${styles.outer} ${styles.outerAnimating}` +
+                        (this.state.isClosing ? ` closing ${styles.outerClosing}` : '')
                     }
                     style={{
                         transition:         `opacity ${this.props.animationDuration}ms`,
@@ -883,7 +953,7 @@ class ReactImageLightbox extends Component {
                 >
 
                     <div // Image holder
-                        className={`inner ${this.state.styles.inner}`}
+                        className={`inner ${styles.inner}`}
                         onClick={this.props.clickOutsideToClose ? this.closeIfClickInner : noop}
                     >
                         {images}
@@ -892,7 +962,7 @@ class ReactImageLightbox extends Component {
                     {!this.props.prevSrc ? '' :
                         <button // Move to previous image button
                             type="button"
-                            className={`prev-button ${this.state.styles.navButtons} ${this.state.styles.navButtonPrev}`}
+                            className={`prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
                             key="prev"
                             onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
                         />
@@ -901,27 +971,27 @@ class ReactImageLightbox extends Component {
                     {!this.props.nextSrc ? '' :
                         <button // Move to next image button
                             type="button"
-                            className={`next-button ${this.state.styles.navButtons} ${this.state.styles.navButtonNext}`}
+                            className={`next-button ${styles.navButtons} ${styles.navButtonNext}`}
                             key="next"
                             onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
                         />
                     }
 
                     <div // Lightbox toolbar
-                        className={`toolbar ${this.state.styles.toolbar}`}
+                        className={`toolbar ${styles.toolbar}`}
                     >
-                        <ul className={`toolbar-left ${this.state.styles.toolbarSide} ${this.state.styles.toolbarLeftSide}`}>
-                            <li className={this.state.styles.toolbarItem}>
-                                <span className={this.state.styles.toolbarItemChild}>{this.props.imageTitle}</span>
+                        <ul className={`toolbar-left ${styles.toolbarSide} ${styles.toolbarLeftSide}`}>
+                            <li className={styles.toolbarItem}>
+                                <span className={styles.toolbarItemChild}>{this.props.imageTitle}</span>
                             </li>
                         </ul>
 
-                        <ul className={`toolbar-right ${this.state.styles.toolbarSide} ${this.state.styles.toolbarRightSide}`}>
+                        <ul className={`toolbar-right ${styles.toolbarSide} ${styles.toolbarRightSide}`}>
                             {!this.props.toolbarButtons ? '' : this.props.toolbarButtons.map((button, i) => (
-                                <li key={i} className={this.state.styles.toolbarItem}>{button}</li>
+                                <li key={i} className={styles.toolbarItem}>{button}</li>
                             ))}
 
-                            <li className={this.state.styles.toolbarItem}>
+                            <li className={styles.toolbarItem}>
                                 <button // Lightbox zoom in button
                                     type="button"
                                     key="zoom-in"
@@ -930,7 +1000,7 @@ class ReactImageLightbox extends Component {
                                 />
                             </li>
 
-                            <li className={this.state.styles.toolbarItem}>
+                            <li className={styles.toolbarItem}>
                                 <button // Lightbox zoom out button
                                     type="button"
                                     key="zoom-out"
@@ -939,12 +1009,12 @@ class ReactImageLightbox extends Component {
                                 />
                             </li>
 
-                            <li className={this.state.styles.toolbarItem}>
+                            <li className={styles.toolbarItem}>
                                 <button // Lightbox close button
                                     type="button"
                                     key="close"
-                                    className={`close ${this.state.styles.toolbarItemChild}` +
-                                        ` ${this.state.styles.builtinButton} ${this.state.styles.closeButton}`
+                                    className={`close ${styles.toolbarItemChild}` +
+                                        ` ${styles.builtinButton} ${styles.closeButton}`
                                     }
                                     onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
                                 />
@@ -952,7 +1022,7 @@ class ReactImageLightbox extends Component {
                         </ul>
                     </div>
                 </div>
-            </Modal>
+            </div>
         );
     }
 }

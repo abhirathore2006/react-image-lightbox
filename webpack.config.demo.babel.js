@@ -2,6 +2,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'path';
 import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     devtool: 'source-map',
@@ -24,6 +25,7 @@ module.exports = {
                 'BABEL_ENV': JSON.stringify('production')
             },
         }),
+        new ExtractTextPlugin('bundle.min.css'),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
@@ -42,13 +44,18 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
+                loader: ExtractTextPlugin.extract('style', 'css-loader?importLoaders=1!sass','postcss','sass-loader'),
+                include: path.join(__dirname, 'src/style.scss')
+            },
+            {
+                test: /\.scss$/,
                 loaders: [
                     'style-loader',
                     'css-loader?modules&importLoaders=1&localIdentName=[local]___[hash:base64:5]',
                     'postcss-loader',
                     'sass-loader',
                 ],
-                include: path.join(__dirname, 'src')
+                include: path.join(__dirname, 'src/examples')
             },
             {
                 test: /\.(jpe?g|png|gif)$/,

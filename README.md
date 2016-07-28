@@ -1,10 +1,9 @@
-# React Image Lightbox
+# React Image Lightbox Universal
 
-[![NPM](https://nodei.co/npm/react-image-lightbox.png)](https://npmjs.org/package/react-image-lightbox)
 
-A flexible lightbox component for displaying images in a React project.
+A flexible lightbox component for displaying images in a React Universal App project, if you re building only client side App then it is advisable to use original package https://github.com/fritz-c/react-image-lightbox
 
-[DEMO](https://fritz-c.github.io/react-image-lightbox/)
+[DEMO](https://abhirathore2006.github.io/react-image-lightbox-universal/)
 
 Features
 - Keyboard shortcuts (with rate limiting)
@@ -17,7 +16,7 @@ Features
 
 ```jsx
 var React    = require('react');
-var Lightbox = require('react-image-lightbox');
+var Lightbox = require('react-image-lightbox-universal');
 
 var images = [
     '//placekitten.com/1500/500',

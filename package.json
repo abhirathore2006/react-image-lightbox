@@ -1,7 +1,7 @@
 {
-  "name": "react-image-lightbox",
-  "version": "3.0.0",
-  "description": "A lightbox component for React.js",
+  "name": "react-image-lightbox-universal",
+  "version": "0.0.1",
+  "description": "A Universal lightbox component for React.js",
   "scripts": {
     "build": " npm run build:demo && npm run build:umd",
     "build:demo": "npm run clean:demo && cross-env NODE_ENV=production webpack --config webpack.config.demo.babel.js --bail",
@@ -21,24 +21,22 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/fritz-c/react-image-lightbox.git"
+    "url": "https://github.com/abhirathore2006/react-image-lightbox-universal"
   },
-  "homepage": "https://fritz-c.github.io/react-image-lightbox",
-  "bugs": "https://github.com/fritz-c/react-image-lightbox/issues",
+  "homepage": "https://abhirathore2006.github.io/react-image-lightbox-universal",
+  "bugs": "https://github.com/abhirathore2006/react-image-lightbox-universal/issues",
   "authors": [
-    "Chris Fritz"
+    "Chris Fritz",
+    "Abhimanyu Singh Rathore"
   ],
   "license": "MIT",
   "dependencies": {
-    "fs": "0.0.2",
-    "jsdom": "^9.4.1",
-    "react-modal": "^1.4.0"
+   
   },
   "peerDependencies": {
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0"
   },
   "devDependencies": {
+    "react-modal": "^1.4.0",
     "autoprefixer": "^6.3.7",
     "babel-cli": "^6.10.1",
     "babel-core": "^6.10.4",
@@ -54,6 +52,7 @@
     "eslint-plugin-import": "^1.10.2",
     "eslint-plugin-jsx-a11y": "^1.5.5",
     "eslint-plugin-react": "^5.2.2",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
     "gh-pages": "^0.11.0",
     "html-webpack-plugin": "^2.22.0",

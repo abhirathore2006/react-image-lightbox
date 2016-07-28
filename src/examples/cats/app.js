@@ -11,7 +11,7 @@ import image1Thumb from './images/1_thumb.jpg';
 import image2Thumb from './images/2_thumb.jpg';
 import image3Thumb from './images/3_thumb.jpg';
 import image4Thumb from './images/4_thumb.jpg';
-
+console.log(styles);
 const images = [ image1, image2, image3, image4 ];
 const thumbs = [ image1Thumb, image2Thumb, image3Thumb, image4Thumb ];
 
@@ -89,29 +89,29 @@ const App = React.createClass({
             <div>
                 <section className={styles['page-header']}>
                     <h1 className={styles['project-name']}>
-                        React Image Lightbox
+                        React Image Lightbox - Universal 
                     </h1>
 
                     <h2 className={styles['project-tagline']}>
-                        Lightbox component for React.js
-                    </h2>
+                        Lightbox component for React.js and works perfect even on Server Rendering ( this is the fork of <a href="https://github.com/fritz-c/react-image-lightbox" > React Image Lighbox </a>)
+                    </h2> 
 
                     <a
-                        href="https://github.com/fritz-c/react-image-lightbox"
+                        href="https://github.com/abhirathore2006/react-image-lightbox-universal"
                         className={styles.btn}
                     >
                         View on GitHub
                     </a>
 
                     <a
-                        href="https://github.com/fritz-c/react-image-lightbox/zipball/master"
+                        href="https://github.com/abhirathore2006/react-image-lightbox-universal/zipball/master"
                         className={styles.btn}
                     >
                         Download .zip
                     </a>
 
                     <a
-                        href="https://github.com/fritz-c/react-image-lightbox/tarball/master"
+                        href="https://github.com/abhirathore2006/react-image-lightbox-universal/tarball/master"
                         className={styles.btn}
                     >
                         Download .tar.gz
@@ -132,7 +132,7 @@ const App = React.createClass({
                         React Image Lightbox
                     </h1>
 
-                    <p>A flexible lightbox component for displaying images in a React project.</p>
+                    <p>A flexible lightbox component for displaying images in a React Universal project.</p>
 
                     <h3>Demo</h3>
 
@@ -158,11 +158,11 @@ const App = React.createClass({
                         <li>No external CSS</li>
                     </ul>
 
-                    <a href="https://github.com/fritz-c/react-image-lightbox">Examples and Documentation on Github</a>
+                    <a href="https://github.com/abhirathore2006/react-image-lightbox-universal">Examples and Documentation on Github</a>
 
                     <footer className={styles['site-footer']}>
                         <span className={styles['site-footer-owner']}>
-                            <a href="https://github.com/fritz-c/react-image-lightbox">React Image Lightbox</a> is maintained by <a href="https://github.com/fritz-c">fritz-c</a>.
+                            <a href="https://github.com/abhirathore2006/react-image-lightbox-universal">React Image Lightbox</a> is maintained by <a href="https://github.com/abhirathore2006">Abhimanyu rathore</a> and originally developed by <a href="https://github.com/fritz-c">fritz-c</a>.
                         </span>
 
                         <span className={styles['site-footer-credits']}>
