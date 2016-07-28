@@ -1,6 +1,6 @@
 {
   "name": "react-image-lightbox-universal",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Universal lightbox component for React.js",
   "scripts": {
     "build": " npm run build:demo && npm run build:umd",
@@ -30,11 +30,8 @@
     "Abhimanyu Singh Rathore"
   ],
   "license": "MIT",
-  "dependencies": {
-   
-  },
-  "peerDependencies": {
-  },
+  "dependencies": {},
+  "peerDependencies": {},
   "devDependencies": {
     "react-modal": "^1.4.0",
     "autoprefixer": "^6.3.7",
