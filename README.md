@@ -10,7 +10,7 @@ Features
 - Image Zoom
 - Flexible rendering using src values assigned on the fly
 - Image preloading for smoother viewing
-- CSS is generated using extract-text-webpack-plugin so require it as shown in below example
+- css is generated using extract-text-webpack-plugin so require it as shown in below example
 
 ## Example
 
